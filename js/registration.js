@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     
     if (editId) {
       try {
-        const response = await fetch(`http://localhost:5000/api/students/${editId}`);
+        const response = await fetch(`https://hie-xtry.onrender.com/api/students/${editId}`);
         if (!response.ok) {
           throw new Error("Failed to fetch student data.");
         }
@@ -75,7 +75,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   
     if (editId) {
       // Update existing student via PUT request
-      fetch(`http://localhost:5000/api/students/${editId}`, {
+      fetch(`https://hie-xtry.onrender.com/api/students/${editId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(student)
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     } else {
       // Create new student via POST request
-      fetch('http://localhost:5000/api/students', {
+      fetch('https://hie-xtry.onrender.com/api/students', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(student)
