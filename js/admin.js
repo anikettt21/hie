@@ -2,7 +2,7 @@
 
 document.addEventListener("DOMContentLoaded", function () {
   // Check via backend if an admin password is set.
-  fetch("http://localhost:5000/api/admin/check")
+  fetch("https://hie-xtry.onrender.com/api/admin/check")
     .then(response => response.json())
     .then(data => {
       if (data.passwordSet) {
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.getElementById("admin-login-button").addEventListener("click", function () {
   const inputPass = document.getElementById("admin-password-input").value;
-  fetch("http://localhost:5000/api/admin/login", {
+  fetch("https://hie-xtry.onrender.com/api/admin/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ password: inputPass })
@@ -42,7 +42,7 @@ document.getElementById("set-password-button").addEventListener("click", functio
     document.getElementById("password-message").textContent = "Please enter a password.";
     return;
   }
-  fetch("http://localhost:5000/api/admin/set-password", {
+  fetch("https://hie-xtry.onrender.com/api/admin/set-password", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ password: newPass })
