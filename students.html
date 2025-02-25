@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registered Students</title>
+  <link rel="icon" type="image/png" href="assets/logo2.png">
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/students.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <!-- Header Section -->
+  <header class="header">
+    <div class="logo-container">
+      <img src="assets/logo1.png" alt="Logo" class="logo">
+      <span class="logo-text">Study-Room</span>
+    </div>
+    <nav class="nav-buttons">
+      <a href="index.html" class="btn btn-outline">Home</a>
+      <a href="registration.html" class="btn btn-outline">New Registration</a>
+      <select id="filter-hall" onchange="filterStudents()">
+        <option value="all">All</option>
+        <option value="hall1">Hall 1</option>
+        <option value="hall2">Hall 2</option>
+      </select>
+    </nav>
+  </header>
+  
+  <!-- Students Table -->
+  <main class="students-container">
+    <h2>Registered Students</h2>
+
+    <!-- Filters -->
+    <div class="filter-container">
+      <input type="text" id="search-bar" placeholder="Search by Name, Mobile No, Seat No, Email..." oninput="filterStudents()">
+      <select id="filter-month" onchange="filterStudents()">
+        <option value="">Filter by Month</option>
+        <option value="January">January</option>
+        <option value="February">February</option>
+        <option value="March">March</option>
+        <option value="April">April</option>
+        <option value="May">May</option>
+        <option value="June">June</option>
+        <option value="July">July</option>
+        <option value="August">August</option>
+        <option value="September">September</option>
+        <option value="October">October</option>
+        <option value="November">November</option>
+        <option value="December">December</option>
+      </select>
+      <select id="filter-seat-type" onchange="filterStudents()">
+        <option value="">Filter by Seat Type</option>
+        <option value="fixed">Fixed</option>
+        <option value="non-fixed">Non-Fixed</option>
+      </select>
+    </div>
+
+    <!-- Toggle Button for Cumulative View -->
+    <button id="toggle-cumulative" class="toggle-btn">Toggle Cumulative View</button>
+
+    <!-- Normal Table View -->
+    <div id="normal-view">
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>No.</th>
+              <th>Name</th>
+              <th>Mobile No.</th>
+              <th>Hall No.</th>
+              <th>Seat No.</th>
+              <th>Registration Date</th>
+              <th>Remaining Fees</th>
+              <th>Seat Type</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="student-data">
+            <!-- Students will be dynamically added here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Cumulative View (Initially Hidden) -->
+    <div id="cumulative-container" style="display:none;">
+      <!-- The cumulative student list will be dynamically inserted here -->
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2025 Study-Room. All rights reserved.</p>
+  </footer>
+
+  <script src="js/students.js"></script>
+  <script src="js/adminAuth.js"></script>
+</body>
+</html>

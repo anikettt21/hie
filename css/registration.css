@@ -1,0 +1,44 @@
+/* Registration Form Styles */
+.form-container {
+    max-width: 600px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    animation: fadeInUp 1s ease-out;
+  }
+  .form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #0c162d;
+  }
+  .form-group {
+    margin-bottom: 15px;
+    text-align: left;
+  }
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #333;
+  }
+  .form-group input,
+  .form-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border 0.3s ease;
+  }
+  .form-group input:focus,
+  .form-group select:focus {
+    border-color: #0c162d;
+    outline: none;
+  }
+  .btn {
+    width: 100%;
+    margin-top: 10px;
+  }
+  
