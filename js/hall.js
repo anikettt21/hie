@@ -23,7 +23,7 @@ function loadHallData() {
   totalSeats = parseInt(localStorage.getItem("totalSeats_" + hall)) || 50;
 
   // Fetch students from the backend, filter by hall and not deleted.
-  fetch('https://hie-xtry.onrender.com/api/students')
+  fetch('https://hie-wmza.onrender.com/api/students')
     .then(response => response.json())
     .then(students => {
       soldSeats = students.filter(s => s.hall === hall && !s.deleted).map(s => s.seat_number);
@@ -101,7 +101,7 @@ function verifyAdmin() {
   return new Promise((resolve, reject) => {
     const adminPass = prompt("Enter Admin Password:");
     // For simplicity, we use the backend admin login endpoint here.
-    fetch("https://hie-xtry.onrender.com/api/admin/login", {
+    fetch("https://hie-wmza.onrender.com/api/admin/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password: adminPass })
@@ -172,111 +172,6 @@ document.getElementById('remove-seat-button').addEventListener('click', function
     renderSeats();
   }).catch(() => {});
 });
-
-// ------------------ Monthly Report Functionality ------------------
-
-// When a month is selected, generate a report.
-function showMonthlySeatReport(month) {
-  // Sold seats: from backend student registrations for this hall and matching month.
-  fetch('https://hie-xtry.onrender.com/api/students')
-    .then(response => response.json())
-    .then(students => {
-      const filteredStudents = students.filter(s =>
-        s.hall === hall && getMonthFromDate(s.registration_date) === month
-      );
-      const soldSeatNumbers = filteredStudents.map(s => s.seat_number);
-      const soldCount = soldSeatNumbers.length;
-
-      // Removed seats: filter by removalDate's month.
-      const removedForMonth = removedSeats
-        .filter(item => getMonthFromDate(item.removalDate) === month)
-        .map(item => item.seat);
-      const removedForMonthPermanent = permanentlyRemovedSeats
-        .filter(item => getMonthFromDate(item.removalDate) === month)
-        .map(item => item.seat);
-      const removedSeatNumbers = [...removedForMonth, ...removedForMonthPermanent].sort((a, b) => a - b);
-      const removedCount = removedSeatNumbers.length;
-
-      // Available seats: those not sold or removed.
-      const availableSeatNumbers = [];
-      for (let i = 1; i <= totalSeats; i++) {
-        if (!soldSeatNumbers.includes(i) && !removedSeatNumbers.includes(i)) {
-          availableSeatNumbers.push(i);
-        }
-      }
-      const availableCount = availableSeatNumbers.length;
-
-      const reportDiv = document.getElementById("monthly-report");
-      reportDiv.innerHTML = `
-        <h3>Monthly Report for ${month}</h3>
-        <p>Sold Seats: ${soldCount}</p>
-        <p>Removed Seats: ${removedCount}</p>
-        <p>Available Seats: ${availableCount}</p>
-        <button onclick="toggleFullReport('${month}')">View Full Details</button>
-        <div id="full-report" style="display:none; margin-top:15px;"></div>
-      `;
-    })
-    .catch(err => console.error("Error fetching monthly report:", err));
-}
-
-// Toggle full details for the monthly report.
-function toggleFullReport(month) {
-  const fullReportDiv = document.getElementById("full-report");
-  if (fullReportDiv.style.display === "none") {
-    fetch('https://hie-xtry.onrender.com/api/students')
-      .then(response => response.json())
-      .then(students => {
-        const filteredStudents = students.filter(s =>
-          s.hall === hall && getMonthFromDate(s.registration_date) === month
-        );
-        const soldSeatNumbers = filteredStudents.map(s => s.seat_number);
-
-        const removedForMonth = removedSeats
-          .filter(item => getMonthFromDate(item.removalDate) === month)
-          .map(item => item.seat);
-        const removedForMonthPermanent = permanentlyRemovedSeats
-          .filter(item => getMonthFromDate(item.removalDate) === month)
-          .map(item => item.seat);
-        const removedSeatNumbers = [...removedForMonth, ...removedForMonthPermanent].sort((a, b) => a - b);
-
-        const availableSeatNumbers = [];
-        for (let i = 1; i <= totalSeats; i++) {
-          if (!soldSeatNumbers.includes(i) && !removedSeatNumbers.includes(i)) {
-            availableSeatNumbers.push(i);
-          }
-        }
-
-        fullReportDiv.innerHTML = `
-          <div class="report-box sold-box">
-            <h4>Sold Seats</h4>
-            <p>${soldSeatNumbers.join(", ") || "None"}</p>
-          </div>
-          <div class="report-box removed-box">
-            <h4>Removed Seats</h4>
-            <p>${removedSeatNumbers.join(", ") || "None"}</p>
-          </div>
-          <div class="report-box available-box">
-            <h4>Available Seats</h4>
-            <p>${availableSeatNumbers.join(", ") || "None"}</p>
-          </div>
-        `;
-        fullReportDiv.style.display = "block";
-      })
-      .catch(err => console.error("Error fetching full report:", err));
-  } else {
-    fullReportDiv.style.display = "none";
-  }
-}
-
-// Handler for month dropdown change.
-function handleMonthChange() {
-  const month = document.getElementById("month-select").value;
-  if (month) {
-    showMonthlySeatReport(month);
-  } else {
-    document.getElementById("monthly-report").innerHTML = "";
-  }
-}
 
 // Initialize the seat layout on page load.
 document.addEventListener('DOMContentLoaded', fetchAndRenderSeats);
