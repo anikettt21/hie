@@ -86,4 +86,36 @@
     margin: 20px 0 10px;
     color: #0c162d;
   }
+  /* Style for Edit Button */
+table button.edit-btn {
+    background-color: #00b4d8;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 5px;
+  }
+  
+  table button.edit-btn:hover {
+    background-color: #a2d2ff;
+  }
+  
+  /* Style for Delete Button */
+  table button.delete-btn {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  table button.delete-btn:hover {
+    background-color: #c0392b;
+  }
   
