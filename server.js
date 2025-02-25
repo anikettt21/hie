@@ -11,7 +11,7 @@ app.use(bodyParser.json());
 
 // Replace <db_username> and <db_password> with your provided credentials,
 // and use your database name "Study-room"
-const uri = "mongodb+srv://aniket:878819@cluster0.tvi7o.mongodb.net/Study-room?retryWrites=true&w=majority";
+const uri = "mongodb+srv://aniketgade:878819@cluster9.0jf9h.mongodb.net/studyroomfinal?retryWrites=true&w=majority";
 
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("Connected to MongoDB Atlas"))
