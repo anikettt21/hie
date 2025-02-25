@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
   });
   
   function fetchStudents() {
-    fetch('http://localhost:5000/api/students')
+    fetch('https://hie-xtry.onrender.com/api/students')
       .then(response => {
         if (!response.ok) throw new Error("Failed to fetch students.");
         return response.json();
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const filterHall = document.getElementById('filter-hall').value;
     const filterSeatType = document.getElementById('filter-seat-type').value;
     
-    fetch('http://localhost:5000/api/students')
+    fetch('https://hie-xtry.onrender.com/api/students')
       .then(response => response.json())
       .then(students => {
         const filteredData = students.filter(student => {
@@ -72,7 +72,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function verifyAdmin() {
     return new Promise((resolve, reject) => {
       const adminPass = prompt("Enter Admin Password:");
-      fetch("http://localhost:5000/api/admin/login", {
+      fetch("https://hie-xtry.onrender.com/api/admin/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ password: adminPass })
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', function () {
     verifyAdmin()
       .then(() => {
         if (confirm('Are you sure you want to delete this student?')) {
-          fetch(`http://localhost:5000/api/students/${id}`, { method: 'DELETE' })
+          fetch(`https://hie-xtry.onrender.com/api/students/${id}`, { method: 'DELETE' })
             .then(response => {
               if (!response.ok) throw new Error("Failed to delete student.");
               return response.json();
@@ -128,7 +128,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const filterHall = document.getElementById('filter-hall').value;
     const filterSeatType = document.getElementById('filter-seat-type').value;
     
-    fetch('http://localhost:5000/api/students')
+    fetch('https://hie-xtry.onrender.com/api/students')
       .then(response => response.json())
       .then(allStudents => {
         let students = allStudents.filter(student => {
