@@ -17,12 +17,12 @@ function getMonthFromDate(dateStr) {
 // Load hall-specific data by fetching sold seats from the backend.
 function loadHallData() {
   hall = window.location.pathname.includes('hall1') ? 'hall1' : 'hall2';
-  // Get removed seats and totalSeats from localStorage (or defaults)
+  // Retrieve removed seats and totalSeats from localStorage (or defaults)
   removedSeats = JSON.parse(localStorage.getItem("removedSeats_" + hall)) || [];
   permanentlyRemovedSeats = JSON.parse(localStorage.getItem("permanentlyRemovedSeats_" + hall)) || [];
   totalSeats = parseInt(localStorage.getItem("totalSeats_" + hall)) || 50;
 
-  // Fetch students from the backend, filter by hall and not deleted.
+  // Fetch all students from backend and filter by hall (not deleted)
   fetch('https://hie-wmza.onrender.com/api/students')
     .then(response => response.json())
     .then(students => {
@@ -57,7 +57,7 @@ function renderSeats() {
   }
 }
 
-// Helper: Check if a seat is in an array of removal objects.
+// Helper: Check if a seat (number) is in an array of removal objects.
 function isSeatRemoved(seatNumber, removalArray) {
   return removalArray.some(item => item.seat === seatNumber);
 }
@@ -67,11 +67,11 @@ function fetchAndRenderSeats() {
   loadHallData();
 }
 
-// Helper: Add an edit icon to a removed seat.
+// Helper: Add a pencil (edit) icon to a removed seat.
 function addEditIcon(seatElement, seatNumber) {
   const editIcon = document.createElement('span');
   editIcon.className = 'edit-icon';
-  editIcon.innerHTML = '&#9998;';
+  editIcon.innerHTML = '&#9998;'; // Unicode pencil icon
   editIcon.addEventListener('click', function (e) {
     e.stopPropagation();
     handleEditSeat(seatNumber);
@@ -79,13 +79,15 @@ function addEditIcon(seatElement, seatNumber) {
   seatElement.appendChild(editIcon);
 }
 
-// Handle editing a seat.
+// Handle editing a seat (restore or mark as permanently removed)
 function handleEditSeat(seatNumber) {
   const choice = prompt(`For seat ${seatNumber}:\nEnter 1 to restore this seat.\nEnter 2 to mark it permanently removed.`);
   if (choice === "1") {
+    // Restore: remove any removal records for this seat.
     removedSeats = removedSeats.filter(item => item.seat !== seatNumber);
     permanentlyRemovedSeats = permanentlyRemovedSeats.filter(item => item.seat !== seatNumber);
   } else if (choice === "2") {
+    // Permanently remove: remove from temporary array then add to permanent array if not already present.
     removedSeats = removedSeats.filter(item => item.seat !== seatNumber);
     if (!isSeatRemoved(seatNumber, permanentlyRemovedSeats)) {
       permanentlyRemovedSeats.push({ seat: seatNumber, removalDate: new Date().toISOString() });
@@ -96,11 +98,10 @@ function handleEditSeat(seatNumber) {
   renderSeats();
 }
 
-// Helper for admin verification.
+// Helper for admin verification using backend API.
 function verifyAdmin() {
   return new Promise((resolve, reject) => {
     const adminPass = prompt("Enter Admin Password:");
-    // For simplicity, we use the backend admin login endpoint here.
     fetch("https://hie-wmza.onrender.com/api/admin/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -140,6 +141,7 @@ document.getElementById('add-seat-button').addEventListener('click', function ()
         alert("This seat is already available.");
         return;
       }
+      // Remove removal record for restoration.
       removedSeats = removedSeats.filter(item => item.seat !== seatNumber);
       permanentlyRemovedSeats = permanentlyRemovedSeats.filter(item => item.seat !== seatNumber);
     }
@@ -148,7 +150,7 @@ document.getElementById('add-seat-button').addEventListener('click', function ()
     renderSeats();
   }).catch(() => {});
 });
-
+  
 // MINUS button: Remove a seat.
 document.getElementById('remove-seat-button').addEventListener('click', function () {
   verifyAdmin().then(() => {
@@ -172,6 +174,111 @@ document.getElementById('remove-seat-button').addEventListener('click', function
     renderSeats();
   }).catch(() => {});
 });
+  
+// ------------------ Monthly Report Functionality ------------------
 
+// When a month is selected, generate a report showing counts and a "View Full Details" option.
+function showMonthlySeatReport(month) {
+  console.log("Selected month:", month);
+  fetch('https://hie-wmza.onrender.com/api/students')
+    .then(response => response.json())
+    .then(students => {
+      const filteredStudents = students.filter(s => {
+         const regMonth = getMonthFromDate(s.registration_date);
+         console.log(`Student ${s.name} registered in:`, regMonth);
+         return s.hall === hall && regMonth === month;
+      });
+      const soldSeatNumbers = filteredStudents.map(s => s.seat_number);
+      const soldCount = soldSeatNumbers.length;
+      
+      const removedForMonth = removedSeats
+        .filter(item => getMonthFromDate(item.removalDate) === month)
+        .map(item => item.seat);
+      const removedForMonthPermanent = permanentlyRemovedSeats
+        .filter(item => getMonthFromDate(item.removalDate) === month)
+        .map(item => item.seat);
+      const removedSeatNumbers = [...removedForMonth, ...removedForMonthPermanent].sort((a, b) => a - b);
+      const removedCount = removedSeatNumbers.length;
+      
+      const availableSeatNumbers = [];
+      for (let i = 1; i <= totalSeats; i++) {
+        if (!soldSeatNumbers.includes(i) && !removedSeatNumbers.includes(i)) {
+          availableSeatNumbers.push(i);
+        }
+      }
+      const availableCount = availableSeatNumbers.length;
+      
+      const reportDiv = document.getElementById("monthly-report");
+      reportDiv.innerHTML = `
+        <h3>Monthly Report for ${month}</h3>
+        <p>Sold Seats: ${soldCount}</p>
+        <p>Removed Seats: ${removedCount}</p>
+        <p>Available Seats: ${availableCount}</p>
+        <button onclick="toggleFullReport('${month}')">View Full Details</button>
+        <div id="full-report" style="display:none; margin-top:15px;"></div>
+      `;
+    })
+    .catch(err => console.error("Error fetching monthly report:", err));
+}
+  
+// Toggle full details for the monthly report.
+function toggleFullReport(month) {
+  const fullReportDiv = document.getElementById("full-report");
+  if (fullReportDiv.style.display === "none") {
+    fetch('https://hie-wmza.onrender.com/api/students')
+      .then(response => response.json())
+      .then(students => {
+        const filteredStudents = students.filter(s =>
+          s.hall === hall && getMonthFromDate(s.registration_date) === month
+        );
+        const soldSeatNumbers = filteredStudents.map(s => s.seat_number);
+  
+        const removedForMonth = removedSeats
+          .filter(item => getMonthFromDate(item.removalDate) === month)
+          .map(item => item.seat);
+        const removedForMonthPermanent = permanentlyRemovedSeats
+          .filter(item => getMonthFromDate(item.removalDate) === month)
+          .map(item => item.seat);
+        const removedSeatNumbers = [...removedForMonth, ...removedForMonthPermanent].sort((a, b) => a - b);
+  
+        const availableSeatNumbers = [];
+        for (let i = 1; i <= totalSeats; i++) {
+          if (!soldSeatNumbers.includes(i) && !removedSeatNumbers.includes(i)) {
+            availableSeatNumbers.push(i);
+          }
+        }
+  
+        fullReportDiv.innerHTML = `
+          <div class="report-box sold-box">
+            <h4>Sold Seats</h4>
+            <p>${soldSeatNumbers.join(", ") || "None"}</p>
+          </div>
+          <div class="report-box removed-box">
+            <h4>Removed Seats</h4>
+            <p>${removedSeatNumbers.join(", ") || "None"}</p>
+          </div>
+          <div class="report-box available-box">
+            <h4>Available Seats</h4>
+            <p>${availableSeatNumbers.join(", ") || "None"}</p>
+          </div>
+        `;
+        fullReportDiv.style.display = "block";
+      })
+      .catch(err => console.error("Error fetching full report:", err));
+  } else {
+    fullReportDiv.style.display = "none";
+  }
+}
+  
+// Handler for month dropdown change.
+function handleMonthChange() {
+  const month = document.getElementById("month-select").value;
+  if (month) {
+    showMonthlySeatReport(month);
+  } else {
+    document.getElementById("monthly-report").innerHTML = "";
+  }
+}
+  
 // Initialize the seat layout on page load.
 document.addEventListener('DOMContentLoaded', fetchAndRenderSeats);
