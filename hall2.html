@@ -31,22 +31,25 @@
       <button id="remove-seat-button" class="btn">-</button>
       <button id="add-seat-button" class="btn">+</button>
     </div>
-    <select id="month-select" onchange="handleMonthChange()">
-      <option value="">Select Month</option>
-      <option value="January">January</option>
-      <option value="February">February</option>
-      <option value="March">March</option>
-      <option value="April">April</option>
-      <option value="May">May</option>
-      <option value="June">June</option>
-      <option value="July">July</option>
-      <option value="August">August</option>
-      <option value="September">September</option>
-      <option value="October">October</option>
-      <option value="November">November</option>
-      <option value="December">December</option>
-    </select>
-    <div id="monthly-report"></div>
+    <div class="month-selector-container">
+      <select id="month-select" onchange="handleMonthChange()">
+        <option value="">Select Month</option>
+        <option value="January">January</option>
+        <option value="February">February</option>
+        <option value="March">March</option>
+        <option value="April">April</option>
+        <option value="May">May</option>
+        <option value="June">June</option>
+        <option value="July">July</option>
+        <option value="August">August</option>
+        <option value="September">September</option>
+        <option value="October">October</option>
+        <option value="November">November</option>
+        <option value="December">December</option>
+      </select>
+    </div>
+    <div id="monthly-report" class="monthly-report-container"></div>
+    
   </main>
   
   <!-- Footer -->
