@@ -23,7 +23,7 @@ function loadHallData() {
   totalSeats = parseInt(localStorage.getItem("totalSeats_" + hall)) || 50;
 
   // Fetch all students from backend and filter by hall (not deleted)
-  fetch('https://hie-wmza.onrender.com/api/students')
+  fetch('https://hie-1.onrender.com/api/students')
     .then(response => response.json())
     .then(students => {
       soldSeats = students.filter(s => s.hall === hall && !s.deleted).map(s => s.seat_number);
@@ -102,7 +102,7 @@ function handleEditSeat(seatNumber) {
 function verifyAdmin() {
   return new Promise((resolve, reject) => {
     const adminPass = prompt("Enter Admin Password:");
-    fetch("https://hie-wmza.onrender.com/api/admin/login", {
+    fetch("https://hie-1.onrender.com/api/admin/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ password: adminPass })
@@ -180,7 +180,7 @@ document.getElementById('remove-seat-button').addEventListener('click', function
 // When a month is selected, generate a report showing counts and a "View Full Details" option.
 function showMonthlySeatReport(month) {
   console.log("Selected month:", month);
-  fetch('https://hie-wmza.onrender.com/api/students')
+  fetch('https://hie-1.onrender.com/api/students')
     .then(response => response.json())
     .then(students => {
       const filteredStudents = students.filter(s => {
@@ -225,7 +225,7 @@ function showMonthlySeatReport(month) {
 function toggleFullReport(month) {
   const fullReportDiv = document.getElementById("full-report");
   if (fullReportDiv.style.display === "none") {
-    fetch('https://hie-wmza.onrender.com/api/students')
+    fetch('https://hie-1.onrender.com/api/students')
       .then(response => response.json())
       .then(students => {
         const filteredStudents = students.filter(s =>
