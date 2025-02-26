@@ -178,3 +178,20 @@ app.get('/api/students/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+// Permanent DELETE: Permanently delete a student by ID
+app.delete('/api/students/permanent/:id', async (req, res) => {
+  console.log("Permanent delete requested for student id:", req.params.id);
+  try {
+    const student = await Student.findByIdAndDelete(req.params.id);
+    if (!student) {
+      console.error("Student not found with id:", req.params.id);
+      return res.status(404).json({ error: "Student not found" });
+    }
+    console.log("Student permanently deleted:", student);
+    res.json({ message: "Student permanently deleted", student });
+  } catch (err) {
+    console.error("Error permanently deleting student:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
