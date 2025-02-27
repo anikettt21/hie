@@ -489,3 +489,27 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+// On your server side - add this to your user deletion endpoint
+
+// In your user deletion route handler (likely in a users.js or auth.js on the server)
+router.delete('/users/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    
+    // Delete the user from the database
+    const result = await User.findByIdAndDelete(userId);
+    
+    if (!result) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    
+    // Emit a 'user-deleted' event to all connected clients
+    // This assumes you have socket.io set up on your server
+    io.emit('user-deleted', { userId: userId });
+    
+    return res.json({ success: true, message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    return res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
