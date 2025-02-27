@@ -275,6 +275,60 @@ app.delete('/api/students/permanent/:id', async (req, res) => {
   }
 });
 
+// PUT: Restore a deleted student
+app.put('/api/students/restore/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { seat_number, registration_date } = req.body;
+    
+    // Find the student to restore
+    const student = await Student.findById(id);
+    
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+    
+    // Check if seat is already taken by another student
+    if (seat_number) {
+      const seatExists = await Student.findOne({ 
+        hall: student.hall, 
+        seat_number: seat_number,
+        _id: { $ne: id }, // Exclude the current student
+        deleted: false // Only check non-deleted students
+      });
+      
+      if (seatExists) {
+        return res.status(400).json({ 
+          error: 'Seat is already taken', 
+          message: `Seat ${seat_number} in ${student.hall} is already occupied.`
+        });
+      }
+      
+      // Update seat number if a new one is provided
+      student.seat_number = seat_number;
+    }
+    
+    // Update registration date if provided
+    if (registration_date) {
+      student.registration_date = new Date(registration_date);
+    }
+    
+    // Mark student as not deleted
+    student.deleted = false;
+    
+    // Save the updated student
+    await student.save();
+    
+    res.json({ 
+      message: 'Student has been restored successfully',
+      student
+    });
+  } catch (error) {
+    console.error('Error restoring student:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 //
 // Hall Routes
 //
@@ -489,27 +543,48 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-// On your server side - add this to your user deletion endpoint
+// Add this route to your backend server file (e.g. server.js or app.js)
 
-// In your user deletion route handler (likely in a users.js or auth.js on the server)
-router.delete('/users/:userId', async (req, res) => {
+// Password verification endpoint
+app.post('/api/auth/verify-password', async (req, res) => {
   try {
-    const userId = req.params.userId;
+    const { password } = req.body;
     
-    // Delete the user from the database
-    const result = await User.findByIdAndDelete(userId);
-    
-    if (!result) {
-      return res.status(404).json({ success: false, message: 'User not found' });
+    if (!password) {
+      return res.status(400).json({ success: false, message: 'Password is required' });
     }
     
-    // Emit a 'user-deleted' event to all connected clients
-    // This assumes you have socket.io set up on your server
-    io.emit('user-deleted', { userId: userId });
+    // First check if it matches the admin password
+    const adminQuery = await db.collection('admins').findOne({});
+    if (adminQuery && adminQuery.password) {
+      // Compare the provided password with the admin password
+      const isAdminPassword = await bcrypt.compare(password, adminQuery.password);
+      
+      if (isAdminPassword) {
+        return res.json({ success: true, message: 'Admin password verified' });
+      }
+    }
     
-    return res.json({ success: true, message: 'User deleted successfully' });
+    // If not admin password, check if it's a valid user password
+    // This assumes users have a phone number and password stored in the database
+    const users = await db.collection('users').find().toArray();
+    
+    // Check each user's password
+    for (const user of users) {
+      if (user.password) {
+        const isUserPassword = await bcrypt.compare(password, user.password);
+        
+        if (isUserPassword) {
+          return res.json({ success: true, message: 'User password verified' });
+        }
+      }
+    }
+    
+    // If we get here, no matching password was found
+    return res.status(401).json({ success: false, message: 'Invalid password' });
+    
   } catch (error) {
-    console.error('Error deleting user:', error);
-    return res.status(500).json({ success: false, message: 'Server error' });
+    console.error('Password verification error:', error);
+    res.status(500).json({ success: false, message: 'Server error during password verification' });
   }
 });
