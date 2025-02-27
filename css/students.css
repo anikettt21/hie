@@ -1,0 +1,121 @@
+/* Students Table Styles */
+.students-container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+  }
+  .students-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #0c162d;
+  }
+  .filter-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  .filter-container input,
+  .filter-container select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  .table-container {
+    overflow-x: auto;
+  }
+  .table-container table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+  }
+  .table-container th,
+  .table-container td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  .deleted-row {
+    background-color: #ffcccc !important;
+  }
+  .fees-yes {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 5px;
+    border-radius: 3px;
+  }
+  .fees-no {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 5px;
+    border-radius: 3px;
+  }
+  
+  /* Toggle Button */
+  .toggle-btn {
+    background-color: #0c162d;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    display: block;
+    margin: 0 auto 20px auto;
+  }
+  .toggle-btn:hover {
+    background-color: #1a2948;
+    transform: scale(1.03);
+  }
+  
+  /* Cumulative Table */
+  .cumulative-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+  }
+  .cumulative-table th,
+  .cumulative-table td {
+    padding: 8px;
+    border: 1px solid #ccc;
+    text-align: center;
+  }
+  .cumulative-table h3 {
+    margin: 20px 0 10px;
+    color: #0c162d;
+  }
+  /* Style for Edit Button */
+table button.edit-btn {
+    background-color: #00b4d8;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-right: 5px;
+  }
+  
+  table button.edit-btn:hover {
+    background-color: #a2d2ff;
+  }
+  
+  /* Style for Delete Button */
+  table button.delete-btn {
+    background-color: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  table button.delete-btn:hover {
+    background-color: #c0392b;
+  }
+  
