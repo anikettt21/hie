@@ -1,11 +1,39 @@
 // auth.js - Common authentication functions (Updated to enforce admin password verification)
 
+// Socket.io connection variable
+let socket;
+
+// Initialize socket connection
+function initializeSocket() {
+  // Connect to the socket server
+  socket = io('https://hie-1.onrender.com');
+  
+  // Listen for user deletion events
+  socket.on('user-deleted', (data) => {
+    // Check if the deleted user ID matches the current user's ID
+    const currentUserId = localStorage.getItem('userId') || sessionStorage.getItem('userId');
+    
+    if (currentUserId === data.userId) {
+      console.log('Your account has been deleted by an admin');
+      // Show a message to the user
+      alert('Your account has been deleted by an administrator. You will be logged out now.');
+      // Perform logout
+      handleLogout();
+    }
+  });
+}
+
 // Function to check if user is logged in
 function checkAuth() {
   const token = localStorage.getItem('userToken');
   const sessionToken = sessionStorage.getItem('userSessionToken');
   const isAdmin = localStorage.getItem('isAdmin') === 'true' || sessionStorage.getItem('isAdmin') === 'true';
   const adminVerified = sessionStorage.getItem('adminVerified') === 'true';
+  
+  // Initialize socket connection if user is logged in
+  if (token || sessionToken) {
+    initializeSocket();
+  }
   
   // If current page is admin page, check if admin is verified
   if (window.location.href.includes('admin.html')) {
@@ -35,6 +63,7 @@ function checkAuth() {
     if (!sessionToken) {
       sessionStorage.setItem('userSessionToken', token);
       sessionStorage.setItem('userName', localStorage.getItem('userName'));
+      sessionStorage.setItem('userId', localStorage.getItem('userId')); // Make sure userId is also stored in session
       if (localStorage.getItem('isAdmin')) {
         sessionStorage.setItem('isAdmin', localStorage.getItem('isAdmin'));
         // Note: We don't set adminVerified here, as we want to verify every session
@@ -60,15 +89,22 @@ function checkAuth() {
 
 // Function to handle logout
 function handleLogout() {
+  // Disconnect socket if it exists
+  if (socket && socket.connected) {
+    socket.disconnect();
+  }
+  
   // Clear both storage types
   localStorage.removeItem('userToken');
   localStorage.removeItem('userName');
   localStorage.removeItem('isAdmin');
+  localStorage.removeItem('userId');
   
   sessionStorage.removeItem('userSessionToken');
   sessionStorage.removeItem('userName');
   sessionStorage.removeItem('isAdmin');
   sessionStorage.removeItem('adminVerified');
+  sessionStorage.removeItem('userId');
   
   window.location.href = 'login.html';
 }
@@ -116,7 +152,8 @@ function validateToken() {
   // For now, we'll just assume the token is valid if it exists
   return Promise.resolve(true);
 }
-// Setup logout button
+
+// Setup logout button (redundant but kept for compatibility)
 const logoutButton = document.getElementById('logout-button');
 if (logoutButton) {
   logoutButton.addEventListener('click', handleLogout);
