@@ -23,19 +23,30 @@ document.addEventListener("DOMContentLoaded", function() {
   const errorMessage = document.getElementById('login-error');
   const registerLink = document.getElementById('register-link');
   
+  // Debug check - log if elements are found
+  console.log("Form found:", loginForm !== null);
+  console.log("Phone input found:", phoneInput !== null);
+  console.log("Password input found:", passwordInput !== null);
+  console.log("Error message element found:", errorMessage !== null);
+  
   // Handle form submission
   if (loginForm) {
     loginForm.addEventListener('submit', function(event) {
       event.preventDefault();
+      console.log("Form submission triggered");
       
       // Reset error message
-      errorMessage.textContent = '';
-      errorMessage.style.display = 'none';
+      if (errorMessage) {
+        errorMessage.textContent = '';
+        errorMessage.style.display = 'none';
+      } else {
+        console.error("Error message element not found");
+      }
       
       // Get form values
       const phone = phoneInput.value.trim();
       const password = passwordInput.value;
-      const rememberMe = rememberMeCheckbox.checked;
+      const rememberMe = rememberMeCheckbox ? rememberMeCheckbox.checked : false;
       
       // Validate inputs
       if (!phone || !password) {
@@ -71,6 +82,7 @@ document.addEventListener("DOMContentLoaded", function() {
       })
       .then(data => {
         if (data.success) {
+          console.log("Login successful:", data);
           // Always store in sessionStorage for current session
           sessionStorage.setItem('userSessionToken', data.token);
           sessionStorage.setItem('userName', data.name || 'User');
@@ -88,12 +100,15 @@ document.addEventListener("DOMContentLoaded", function() {
         }
       })
       .catch(error => {
+        console.error("Login error:", error);
         showError(error.message || 'An error occurred during login');
       })
       .finally(() => {
         setFormLoading(false);
       });
     });
+  } else {
+    console.error("Login form element not found! Check your HTML for an element with id='login-form'");
   }
   
   // Handle register link if present
@@ -106,13 +121,24 @@ document.addEventListener("DOMContentLoaded", function() {
   
   // Function to show error message
   function showError(message) {
-    errorMessage.textContent = message;
-    errorMessage.style.display = 'block';
+    if (errorMessage) {
+      errorMessage.textContent = message;
+      errorMessage.style.display = 'block';
+      console.log("Error displayed:", message);
+    } else {
+      console.error("Cannot show error - element not found:", message);
+      alert("Login error: " + message);
+    }
   }
   
   // Function to toggle loading state
   function setFormLoading(isLoading) {
-    const submitButton = loginForm.querySelector('button[type="submit"]');
+    const submitButton = loginForm ? loginForm.querySelector('button[type="submit"]') : null;
+    
+    if (!submitButton) {
+      console.error("Submit button not found in form");
+      return;
+    }
     
     if (isLoading) {
       submitButton.disabled = true;
@@ -123,9 +149,9 @@ document.addEventListener("DOMContentLoaded", function() {
     }
     
     // Disable/enable form inputs
-    phoneInput.disabled = isLoading;
-    passwordInput.disabled = isLoading;
-    rememberMeCheckbox.disabled = isLoading;
+    if (phoneInput) phoneInput.disabled = isLoading;
+    if (passwordInput) passwordInput.disabled = isLoading;
+    if (rememberMeCheckbox) rememberMeCheckbox.disabled = isLoading;
   }
   
   // Function to validate phone number
