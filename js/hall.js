@@ -282,3 +282,43 @@ function handleMonthChange() {
   
 // Initialize the seat layout on page load.
 document.addEventListener('DOMContentLoaded', fetchAndRenderSeats);
+// Load hall-specific data by fetching sold seats from the backend.
+function loadHallData() {
+  hall = window.location.pathname.includes('hall1') ? 'hall1' : 'hall2';
+  // Retrieve removed seats and totalSeats from localStorage (or defaults)
+  removedSeats = JSON.parse(localStorage.getItem("removedSeats_" + hall)) || [];
+  permanentlyRemovedSeats = JSON.parse(localStorage.getItem("permanentlyRemovedSeats_" + hall)) || [];
+  totalSeats = parseInt(localStorage.getItem("totalSeats_" + hall)) || 50;
+
+  // Fetch all students from backend and filter by hall
+  fetch('https://hie-1.onrender.com/api/students')
+    .then(response => response.json())
+    .then(students => {
+      const today = new Date();
+      
+      // For the hall display, only show seats of active students (not deleted and not in the removal period)
+      soldSeats = students.filter(s => {
+        if (s.hall !== hall || s.deleted) return false;
+        
+        // Check if student is in the removal period (between 30-60 days)
+        const regDate = new Date(s.registration_date);
+        const daysSinceRegistration = daysBetween(today, regDate);
+        
+        // Only include students in their first 30 days (active period)
+        return daysSinceRegistration <= 30;
+      }).map(s => s.seat_number);
+      
+      const maxSold = soldSeats.length > 0 ? Math.max(...soldSeats) : 0;
+      totalSeats = Math.max(totalSeats, 50, maxSold);
+      renderSeats();
+    })
+    .catch(err => console.error("Error fetching students:", err));
+}
+
+// Helper function to calculate days between dates (add if not already present)
+function daysBetween(date1, date2) {
+  const oneDay = 24 * 60 * 60 * 1000;
+  const firstDate = new Date(date1);
+  const secondDate = new Date(date2);
+  return Math.round(Math.abs((firstDate - secondDate) / oneDay));
+}
