@@ -199,4 +199,175 @@
       font-size: 1.5rem;
     }
   }
-  
+      /* Additional styles for expired students page */
+      .page-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      
+      .page-title {
+        color: #0c162d;
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 2rem;
+      }
+      
+      .expired-note {
+        background-color: #fff0f0;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+        border-left: 4px solid #e74c3c;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      .expired-note h3 {
+        color: #e74c3c;
+        margin-bottom: 10px;
+        font-size: 1.3rem;
+      }
+      
+      .expired-note p {
+        color: #333;
+        line-height: 1.6;
+      }
+      
+      .filters {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 25px;
+        flex-wrap: wrap;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      .filters input, .filters select {
+        padding: 12px;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+        font-family: 'Poppins', sans-serif;
+        flex: 1;
+        min-width: 200px;
+        outline: none;
+        transition: border 0.3s ease;
+      }
+      
+      .filters input:focus, .filters select:focus {
+        border-color: #0c162d;
+      }
+      
+      .table-container {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      }
+      
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      
+      thead {
+        background: linear-gradient(135deg, #0c162d, #1a2948);
+        color: #fff;
+      }
+      
+      th {
+        padding: 15px;
+        text-align: left;
+        font-weight: 600;
+      }
+      
+      td {
+        padding: 15px;
+        border-top: 1px solid #eee;
+      }
+      
+      tbody tr:hover {
+        background-color: #f8f9fa;
+      }
+      
+      .status-indicator {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        margin-right: 8px;
+        vertical-align: middle;
+      }
+      
+      .status-active {
+        background-color: #2ecc71;
+      }
+      
+      .status-pending-removal {
+        background-color: #e74c3c;
+      }
+      
+      .countdown {
+        font-weight: 600;
+        color: #e74c3c;
+      }
+      
+      .action-buttons {
+        display: flex;
+        gap: 8px;
+      }
+      
+      .restore-btn {
+        background-color: #0c162d;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
+      
+      .restore-btn:hover {
+        background-color: #1a2948;
+        transform: translateY(-2px);
+      }
+      
+      .remove-btn {
+        background-color: #e74c3c;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
+      
+      .remove-btn:hover {
+        background-color: #c0392b;
+        transform: translateY(-2px);
+      }
+      
+      /* Responsive table */
+      @media (max-width: 992px) {
+        table {
+          display: block;
+          overflow-x: auto;
+        }
+      }
+      
+      @media (max-width: 768px) {
+        .filters {
+          flex-direction: column;
+        }
+        
+        .filters input, .filters select {
+          width: 100%;
+        }
+        
+        .page-title {
+          font-size: 1.7rem;
+        }
+      }
