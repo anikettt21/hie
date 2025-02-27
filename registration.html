@@ -97,5 +97,17 @@
   <script src="js/script.js"></script>
   <script src="https://cdn.socket.io/4.6.0/socket.io.min.js" integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+" crossorigin="anonymous"></script>
   <script src="js/registration.js"></script>
+  <div id="password-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-button">&times;</span>
+      <h3>Password Verification</h3>
+      <p>Please enter your password or admin password to continue:</p>
+      <div class="form-group">
+        <input type="password" id="verification-password" class="form-control" placeholder="Enter password">
+        <div id="password-error" class="error-message"></div>
+      </div>
+      <button id="verify-password-button" class="btn btn-primary">Verify & Submit</button>
+    </div>
+  </div>
 </body>
 </html>
